@@ -5,33 +5,52 @@ LANG: C++11
 */
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 #include <set>
+#include <iostream>
 
 using namespace std;
 
-int length, bound;
+int N, M;
+vector<bool> is_bisquare(125001, false);
 set<int> bisquares;
 vector<pair<int, int>> results;
 
 int main() {
     ifstream fin ("ariprog.in");
     ofstream fout ("ariprog.out");
-    fin >> length >> bound;
-    for(int i = 0; i <= bound; i++){
-        for(int j = i; j <= bound; j++){
-            bisquares.insert(pow(i, 2) + pow(j, 2));
+    fin >> N >> M;
+    for(int i = 0; i <= M; i++){
+        for(int j = i; j <= M; j++){
+            int val = pow(i, 2) + pow(j, 2);
+            bisquares.insert(val);
+            is_bisquare[val] = true;
         }
     }
-
-    for(int i = 0; i < pow(bound, 2); i++){
-        int start = 0, length = 1;
-        for(int j = 0; j < 2 * pow(bound, 2); j++){
-
+    for(auto i = bisquares.begin(); i != bisquares.end(); i++){
+        for(auto j = next(i); j != bisquares.end() && (*j - *i) * (N - 2) + *i <= 125000; j++){
+            int n = 1;
+            for(int k = *j; k <= 125000 && is_bisquare[k]; k += (*j - *i))
+                n++;
+            if(n >= N){
+                results.push_back(pair<int,int>(*i,*j - *i));
+            }
         }
     }
-
-
+    sort(results.begin(), results.end(), [](pair<int, int> a, pair<int, int> b) -> bool{
+        if(a.second < b.second){
+            return true;
+        }
+        if(a.second == b.second and a.first < b.first){
+            return true;
+        }
+        return false;
+    });
+    if(results.size() == 0){
+        fout << "NONE" << endl;
+    }
+    for(auto p : results){
+        fout << p.first << " " << p.second << endl;
+    }
 
     fin.close();
     fout.close();
