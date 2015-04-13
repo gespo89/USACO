@@ -40,10 +40,7 @@ int main() {
         if(a.second < b.second){
             return true;
         }
-        if(a.second == b.second and a.first < b.first){
-            return true;
-        }
-        return false;
+        return a.second == b.second and a.first < b.first;
     });
     if(results.size() == 0){
         fout << "NONE" << endl;
